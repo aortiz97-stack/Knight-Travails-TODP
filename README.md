@@ -1,5 +1,5 @@
 # Knight-Travails-TODP
-Knight Travails project from The Odin Project
+Knight Travails project from The Odin Project. Assignment instructions from this <a href='https://www.theodinproject.com/lessons/javascript-knights-travails#assignment'>link</a>:
 
 Introduction
 Now you’re a pro with DFS and BFS. Let’s try using our search algorithms on a real problem.
