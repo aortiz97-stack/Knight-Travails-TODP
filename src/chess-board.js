@@ -18,7 +18,48 @@ const Board = (() => {
     return finalBoard;
   };
 
+  const getAllReachableNeighbors = (coords) => {
+    const row = coords[0];
+    const col = coords[1];
+    const reachableNeighbors = [];
+
+    if (row + 2 <= 7) {
+      if (col + 1 <= 7) {
+        reachableNeighbors.push([row + 2, col + 1]);
+      }
+      if (col - 1 >= 0) {
+        reachableNeighbors.push([row + 2, col - 1]);
+      }
+    }
+    if (row + 1 <= 7) {
+      if (col + 1 <= 7) {
+        reachableNeighbors.push([row + 1, col + 1]);
+      }
+      if (col - 1 >= 0) {
+        reachableNeighbors.push([row + 1, col - 1]);
+      }
+    }
+    if (row - 1 >= 0) {
+      if (col + 1 <= 7) {
+        reachableNeighbors.push([row - 1, col + 1]);
+      }
+      if (col - 1 >= 0) {
+        reachableNeighbors.push([row - 1, col - 1]);
+      }
+    }
+    if (row - 2 >= 0) {
+      if (col + 1 <= 7) {
+        reachableNeighbors.push([row - 2, col + 1]);
+      }
+      if (col - 1 >= 0) {
+        reachableNeighbors.push([row - 2, col - 1]);
+      }
+    }
+    return reachableNeighbors;
+  };
+
   const board = initialize();
+  const getBoard = () => board;
 
   return { board };
 })();
