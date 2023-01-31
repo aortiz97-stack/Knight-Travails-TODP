@@ -33,7 +33,7 @@ const Board = (() => {
 
   let nodeList = getAllNodes();
   const getNodeList = () => nodeList;
-  const setNodeList = (newNodeList) => { nodeList = newNodeList; }; 
+  const setNodeList = (newNodeList) => { nodeList = newNodeList; };
 
   const retrieveNode = (data) => {
     for (let i = 0; i < getNodeList().length; i += 1) {
