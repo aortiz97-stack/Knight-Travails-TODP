@@ -1,5 +1,3 @@
 import Board from './chess-board';
 
-const { board } = Board;
-
-console.log(board);
+console.log(Board().connect());
