@@ -2,9 +2,8 @@ const Node = (coords) => {
   const data = coords;
   const prev = null;
   const next = null;
-  const initialized = false;
   return {
-    data, prev, next, initialized,
+    data, prev, next,
   };
 };
 
@@ -12,7 +11,6 @@ export { Node };
 
 const Board = (() => {
   const head = Node([3, 3]);
-  head.initialized = true;
 
   const getHead = () => head;
 
@@ -33,14 +31,13 @@ const Board = (() => {
     return allNodes;
   };
 
-  const nodeList = getAllNodes();
+  let nodeList = getAllNodes();
   const getNodeList = () => nodeList;
+  const setNodeList = (newNodeList) => { nodeList = newNodeList; }; 
 
   const retrieveNode = (data) => {
     for (let i = 0; i < getNodeList().length; i += 1) {
       const retrievedNode = getNodeList()[i];
-      console.log(`retrivedNode ${retrievedNode.data}`);
-      console.log(`compare data: ${data}`);
       if (JSON.stringify(data) === JSON.stringify(retrievedNode.data)) {
         retrievedNode.initialized = true;
         return retrievedNode;
@@ -88,29 +85,32 @@ const Board = (() => {
     return reachableNeighbors;
   };
 
-  const areAllInitialized = () => {
-    for (let i = 0; i < getNodeList().length; i += 1) {
-      if (!getNodeList()[i].initialized) return false;
+  const connect = (stack = [getHead()], visited = [], prevNode = null) => {
+    if (stack.length === 0) return visited;
+    const popped = stack.pop();
+    const unstackedNode = retrieveNode(popped.data);
+    if (unstackedNode.prev !== null && unstackedNode.next !== null) {
+      return visited;
     }
-    return true;
+    if (prevNode !== null) {
+      const prevNodeFromList = retrieveNode(prevNode.data);
+      prevNodeFromList.next = unstackedNode;
+      unstackedNode.prev = prevNodeFromList;
+    }
+    visited.push(unstackedNode);
+    const allNodeNeighbors = getAllReachableNeighbors(unstackedNode.data);
+    for (let i = 0; i < allNodeNeighbors.length; i += 1) {
+      const neighborNode = retrieveNode(allNodeNeighbors[i]);
+      if (!visited.includes(neighborNode)) {
+        stack.push(neighborNode);
+      }
+    }
+    return connect(stack, visited, unstackedNode);
   };
 
-  const connect = ((queue = [getHead()]) => {
-    if (areAllInitialized()) return getHead();
+  setNodeList(connect());
 
-    const node = queue.shift();
-    const neighbors = getAllReachableNeighbors(node.data);
-    for (let i = 0; i < neighbors.length; i += 1) {
-      const neighborNode = retrieveNode(neighbors[i]);
-      console.log(`NEIGHBOR NODE: ${neighborNode}`);
-      node.next = neighborNode;
-      neighborNode.prev = node;
-      queue.push(neighborNode);
-    }
-    return connect(queue);
-  })();
-
-  return { getHead, retrieveNode };
+  return { getHead, retrieveNode, getNodeList };
 })();
 
 export default Board;
