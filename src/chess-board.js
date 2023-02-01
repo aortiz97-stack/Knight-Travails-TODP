@@ -20,7 +20,7 @@ const Node = (coords) => {
 export { Node };
 
 const Board = (() => {
-  const head = Node([3, 3]);
+  const head = Node([0, 0]);
 
   const getHead = () => head;
 
@@ -103,8 +103,9 @@ const Board = (() => {
   }
 
   const getPath = (targetNode, finalArr = []) => {
+    console.log(`bon voyage`);
     const node = targetNode;
-    finalArr.unshift(node);
+    finalArr.unshift(node.data);
     if (node.parent === null) {
       return finalArr;
     }
@@ -112,7 +113,7 @@ const Board = (() => {
     return getPath(node.parent, finalArr);
   };
 
-  const connect = (targetNodeData, queue = [getHead()]) => {
+  const bfs = (targetNodeData, queue = [getHead()], ancestors = []) => {
     function getQueueData() {
       const queueData = [];
       for (let i = 0; i < queue.length; i += 1) {
@@ -120,31 +121,44 @@ const Board = (() => {
       }
       return queueData;
     }
+    if (queue.length === 0) return getPath(retrieveNode(targetNodeData));
     const dequeuedNode = queue.shift();
     if (JSON.stringify(dequeuedNode.data) === JSON.stringify(targetNodeData)) {
       return getPath(retrieveNode(targetNodeData));
     }
+    ancestors.push(dequeuedNode);
 
     const neighborCoords = getAllReachableNeighbors(dequeuedNode.data);
     for (let i = 0; i < neighborCoords.length; i += 1) {
       const neighborNode = retrieveNode(neighborCoords[i]);
-      for (let j = 1; j < 9; j += 1) {
-        if (dequeuedNode[`c${j}`] === null) {
-          dequeuedNode[`c${j}`] = neighborNode;
+      if (!ancestors.includes(neighborNode)) {
+        for (let j = 1; j < 9; j += 1) {
+          if (dequeuedNode[`c${j}`] === null) {
+            dequeuedNode[`c${j}`] = neighborNode;
+          }
         }
+        if (neighborNode !== null) {
+          neighborNode.parent = dequeuedNode;
+        }
+        queue.push(neighborNode);
       }
-      neighborNode.parent = dequeuedNode;
-      queue.push(neighborNode);
     }
     const dataArr = getQueueData();
     console.log(`queue: ${dataArr}`);
-    return connect(targetNodeData, queue);
+
+    function getAncestorData() {
+      const finalAncs = [];
+      for (let i = 0; i < ancestors.length; i += 1) {
+        finalAncs.push(ancestors[i].data);
+      }
+      return finalAncs;
+    }
+    console.log(`ancestors: ${getAncestorData()}`);
+    return bfs(targetNodeData, queue, ancestors);
   };
 
-  const path = connect();
-
   return {
-    getHead, retrieveNode, getNodeList, path,
+    getHead, retrieveNode, getNodeList, bfs,
   };
 })();
 
