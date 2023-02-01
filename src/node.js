@@ -1,7 +1,5 @@
 const Node = (coords) => {
   const data = coords;
-  const prev = null;
-  const next = null;
   const parent = null;
   const c1 = null;
   const c2 = null;
@@ -13,7 +11,7 @@ const Node = (coords) => {
   const c8 = null;
 
   return {
-    data, prev, next, c1, c2, c3, c4, c5, c6, c7, c8, parent,
+    data, c1, c2, c3, c4, c5, c6, c7, c8, parent,
   };
 };
 

@@ -1,3 +1,7 @@
-import Board from './chess-board';
+import Knight from './knight';
 
-console.log(Board.bfs([1, 2]));
+const initPos = [0, 0];
+const knight = Knight(initPos);
+
+knight.knightMoves([7, 7]);
+knight.knightMoves([3, 3]);

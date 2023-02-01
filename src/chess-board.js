@@ -1,9 +1,12 @@
 import Node from './node';
 
 const Board = (() => {
-  const head = Node([0, 0]);
+  let head = Node([0, 0]);
 
   const getHead = () => head;
+  const setHead = (newHeadData) => {
+    head = Node(newHeadData);
+  };
 
   const getAllNodes = () => {
     const allNodes = [];
@@ -110,7 +113,7 @@ const Board = (() => {
   };
 
   return {
-    getHead, retrieveNode, getNodeList, bfs,
+    getHead, setHead, bfs,
   };
 })();
 
