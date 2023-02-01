@@ -1,5 +1,3 @@
-import mergeSort from './merge-sort';
-
 const Node = (coords) => {
   const data = coords;
   const prev = null;
@@ -104,56 +102,50 @@ const Board = (() => {
     return true;
   }
 
-  const connect = (stack = [getHead()], ancestors = []) => {
-    function getStackData() {
-      const stackData = [];
-      for (let i = 0; i < stack.length; i += 1) {
-        stackData.push(stack[i].data);
-      }
-      return stackData;
+  const getPath = (targetNode, finalArr = []) => {
+    const node = targetNode;
+    finalArr.unshift(node);
+    if (node.parent === null) {
+      return finalArr;
     }
-    let stackData;
-    let ancestorList = ancestors;
-    if (stack.length === 0) return getHead();
-
-    const currRoot = stack.pop();
-    ancestorList.push(JSON.stringify(currRoot.data));
-
-    const allReachableCoords = getAllReachableNeighbors(currRoot.data);
-    const retrievedNodes = [];
-    for (let i = 0; i < allReachableCoords.length; i += 1) {
-      const retrievedNode = Node(allReachableCoords[i]);
-      retrievedNodes.push(retrievedNode);
-    }
-
-    if (allInAncestorList(ancestorList, retrievedNodes)) {
-      ancestorList = [JSON.stringify(getHead().data)];
-      stackData = getStackData();
-      console.log(`stackData when ancestorList is reset: ${stackData}`);
-      return connect(stack, ancestorList);
-    }
-
-    let currChildNum = 1;
-    for (let i = 0; i < retrievedNodes.length; i += 1) {
-      if (!ancestorList.includes(JSON.stringify(retrievedNodes[i].data))) {
-        while (currRoot[`c${currChildNum}`] !== null) {
-          currChildNum += 1;
-        }
-        currRoot[`c${currChildNum}`] = retrievedNodes[i];
-        stack.push(retrievedNodes[i]);
-        stackData = getStackData();
-        console.log(`stackData after pushing retrieved node to put in child ${currChildNum} of ${currRoot.data}: ${stackData}`);
-        //return connect(stack, ancestorList);
-      }
-    }
-    stackData = getStackData();
-    console.log(`stackData after final return: ${stackData}`);
-    return connect(stack, ancestorList);
+    console.log(`finalArr ${finalArr}`);
+    return getPath(node.parent, finalArr);
   };
 
-  connect();
+  const connect = (targetNodeData, queue = [getHead()]) => {
+    function getQueueData() {
+      const queueData = [];
+      for (let i = 0; i < queue.length; i += 1) {
+        queueData.push(queue[i].data);
+      }
+      return queueData;
+    }
+    const dequeuedNode = queue.shift();
+    if (JSON.stringify(dequeuedNode.data) === JSON.stringify(targetNodeData)) {
+      return getPath(retrieveNode(targetNodeData));
+    }
 
-  return { getHead, retrieveNode, getNodeList };
+    const neighborCoords = getAllReachableNeighbors(dequeuedNode.data);
+    for (let i = 0; i < neighborCoords.length; i += 1) {
+      const neighborNode = retrieveNode(neighborCoords[i]);
+      for (let j = 1; j < 9; j += 1) {
+        if (dequeuedNode[`c${j}`] === null) {
+          dequeuedNode[`c${j}`] = neighborNode;
+        }
+      }
+      neighborNode.parent = dequeuedNode;
+      queue.push(neighborNode);
+    }
+    const dataArr = getQueueData();
+    console.log(`queue: ${dataArr}`);
+    return connect(targetNodeData, queue);
+  };
+
+  const path = connect();
+
+  return {
+    getHead, retrieveNode, getNodeList, path,
+  };
 })();
 
 export default Board;
