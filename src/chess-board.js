@@ -93,34 +93,16 @@ const Board = (() => {
     return reachableNeighbors;
   };
 
-  function allInAncestorList(alist, retrievedNodeList) {
-    for (let i = 0; i < retrievedNodeList.length; i += 1) {
-      if (!alist.includes(JSON.stringify(retrievedNodeList[i].data))) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   const getPath = (targetNode, finalArr = []) => {
-    console.log(`bon voyage`);
     const node = targetNode;
     finalArr.unshift(node.data);
     if (node.parent === null) {
       return finalArr;
     }
-    console.log(`finalArr ${finalArr}`);
     return getPath(node.parent, finalArr);
   };
 
   const bfs = (targetNodeData, queue = [getHead()], ancestors = []) => {
-    function getQueueData() {
-      const queueData = [];
-      for (let i = 0; i < queue.length; i += 1) {
-        queueData.push(queue[i].data);
-      }
-      return queueData;
-    }
     if (queue.length === 0) return getPath(retrieveNode(targetNodeData));
     const dequeuedNode = queue.shift();
     if (JSON.stringify(dequeuedNode.data) === JSON.stringify(targetNodeData)) {
@@ -143,17 +125,6 @@ const Board = (() => {
         queue.push(neighborNode);
       }
     }
-    const dataArr = getQueueData();
-    console.log(`queue: ${dataArr}`);
-
-    function getAncestorData() {
-      const finalAncs = [];
-      for (let i = 0; i < ancestors.length; i += 1) {
-        finalAncs.push(ancestors[i].data);
-      }
-      return finalAncs;
-    }
-    console.log(`ancestors: ${getAncestorData()}`);
     return bfs(targetNodeData, queue, ancestors);
   };
 
